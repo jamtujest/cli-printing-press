@@ -84,49 +84,13 @@ Prompt again only when `origin/main` advances to a different SHA.
 
 If no `[repo-upgrade-available]` line was emitted, skip this section entirely.
 
-## 3. Global open-agent-skills freshness check
+## 3. Global skill updates disabled in this fork
 
-If `PRESS_REPO_MODE=true`, skip this section entirely. The repo checkout/plugin-dir is the source of truth for skill files in that mode, and section 2 already handles updating the checkout from `origin/main`.
-
-If `PRESS_REPO_MODE=false`, run the targeted global open-agent-skills updater before continuing:
-
-```bash
-# PRINTING_PRESS_SKILL_UPDATE_START
-npx -y skills@latest update -g \
-  printing-press \
-  printing-press-amend \
-  printing-press-import \
-  printing-press-output-review \
-  printing-press-polish \
-  printing-press-publish \
-  printing-press-reprint \
-  printing-press-retro \
-  printing-press-score
-# PRINTING_PRESS_SKILL_UPDATE_END
-```
-
-Interpret the output as follows:
-
-- If it reports `✓ Updated N skill(s)` with `N > 0`, stop immediately. Tell the user:
-
-  > "Updated N Printing Press skill(s) on disk. This agent session may still have the old skill text loaded. Restart the agent session, then re-run `/printing-press` before continuing."
-
-  Do not proceed to research, generation, scoring, publishing, or any other workflow after a skill update.
-- If it reports `All global skills are up to date` or otherwise completes without an updated-skill summary, continue.
-- If it reports `No installed skills found matching: ...`, continue without blocking. The current skill is already running, so absence from the global open-agent-skills registry usually means this session was loaded from another install surface, such as the Claude Code plugin/marketplace channel, a project-scoped skill install, or a local plugin directory. Do not tell the user to reinstall through `npx skills` as a prerequisite. If they explicitly ask how to move to the global open-agent-skills install path, give them the skills-only installer command so they do not have to name individual skills:
-
-  ```bash
-  curl -fsSL https://raw.githubusercontent.com/mvanhorn/cli-printing-press/main/scripts/install.sh | bash -s -- --skills-only
-  ```
-
-  Then tell them to restart the agent session.
-- If it reports one or more `Failed to update ...` lines or exits non-zero, stop and surface the failure. For manual repair, tell the user to run the skills-only installer command below, then restart the agent session. Do not continue with potentially mixed skill files.
-
-  ```bash
-  curl -fsSL https://raw.githubusercontent.com/mvanhorn/cli-printing-press/main/scripts/install.sh | bash -s -- --skills-only
-  ```
-
-This command mutates global skill files, so never run it silently after user work has started. It belongs in preflight before any user-facing prompt.
+Do not run the global skills updater or install skills from upstream during preflight.
+This fork intentionally disables import and reprint. Updating from upstream could
+restore those functions. Review updates as explicit changes to this fork, then
+repeat the security audit before installation. Do not repair a missing skill by
+fetching its upstream version.
 
 ## 4. Min-binary-version compatibility
 

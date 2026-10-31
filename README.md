@@ -1,3 +1,5 @@
+> **Owner fork: restricted work in progress.** On branch `hardening/disable-import-reprint`, import and reprint are disabled. Global preflight skill updates are disabled to preserve these changes. This is not a security approval of the whole package. See [FORK-SAFETY.md](FORK-SAFETY.md). Upstream install commands below do not install this patched branch.
+
 # CLI Printing Press
 
 [![CI](https://github.com/mvanhorn/cli-printing-press/actions/workflows/lint.yml/badge.svg)](https://github.com/mvanhorn/cli-printing-press/actions/workflows/lint.yml)
